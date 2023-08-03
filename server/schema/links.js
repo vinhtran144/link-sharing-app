@@ -1,6 +1,6 @@
-import {links} from '../sampleData';
+const {links} = require('../sampleData');
 
-export const typeDef = `
+const typeDef = `
     extend type Query {
         link(id: String!): Link
     }
@@ -12,10 +12,12 @@ export const typeDef = `
     }
 `;
 
-export const resolvers ={
+const resolvers ={
     Query:{
         link: (parent, args) => {
             return links.find(link = link.id === args.id);
         }
     }
 }
+
+module.exports = {typeDef, resolvers};

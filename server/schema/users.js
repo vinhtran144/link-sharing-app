@@ -1,6 +1,6 @@
-import {users} from '../sampleData';
+const {users}  = require('../sampleData');
 
-export const typeDef = `
+const typeDef = `
     extend type Query {
         user(id: String!): User
     }
@@ -13,10 +13,12 @@ export const typeDef = `
     }
 `;
 
-export const resolvers ={
+const resolvers ={
     Query:{
         user: (parent, args) => {
             return users.find(user = user.id === args.id);
         }
     }
 }
+
+module.exports = {typeDef, resolvers};
