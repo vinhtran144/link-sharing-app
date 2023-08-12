@@ -9,14 +9,17 @@ const {
     resolvers: linksResolvers} = require('./links.js');
 
 // initiate Query with a random _empty string since Query type can't be empty
+// then each individual can extends Query object
 const Query = `
   type Query {
     _empty: String
   }
 `;
 
-  const typeDefs=  [Query , Users, Links];
-  const resolvers= merge(usersResolvers, linksResolvers);
+// Combine every individual typeDef and resolvers and export
+
+const typeDefs=  [Query , Users, Links];
+const resolvers= merge(usersResolvers, linksResolvers);
 
   
 module.exports = {typeDefs, resolvers};
