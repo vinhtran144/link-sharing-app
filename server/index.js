@@ -3,11 +3,12 @@ const express = require('express');
 const { createSchema, createYoga } = require('graphql-yoga');
 const port = process.env.PORT || 5000;
 const {typeDefs, resolvers} = require('./schema') ; 
-const connectDB = require('./config/db');
+const db = require('./config/db');
 const app = express();
+const connectMongo = require('connect-mongo');
+const session = require('express-session');
 
-// Connect to database
-connectDB();
+
 
 // start a Yoga graghql server
 const graphQLServer = createYoga({
@@ -22,4 +23,11 @@ const graphQLServer = createYoga({
 
 app.use(graphQLServer.graphqlEndpoint, graphQLServer);
 
-app.listen(port, console.log(`Server running on port ${port}`));
+db.once('open',()=>{
+    console.log(`Connected to host ${db.host}`);
+    app.listen(port, console.log(`Server running on port ${port}`));
+    const store = connectMongo.create({
+        client: db.client
+    });
+    
+});
