@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     links: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Links'
+            ref: 'Link'
         }
     ],
 
@@ -49,6 +49,7 @@ userSchema.pre('save', async function(next) {
             this.devlinkURL = newURL;
         }
     }
+    next();
 })
 
 const User = mongoose.model('User', userSchema);
