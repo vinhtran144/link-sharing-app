@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const {Schema} = mongoose;
-const cryptoRandomString = require ('crypto-random-string');
+const {cryptoRandomString} = require ('crypto-random-string');
 
 const userSchema = new mongoose.Schema({
     username: {
