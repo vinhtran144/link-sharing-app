@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const {Schema} = mongoose;
-const {cryptoRandomString} = require ('crypto-random-string');
+// const cryptoRandomString = require('crypto-random-string');
+const { Schema } = mongoose;
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -42,7 +42,7 @@ userSchema.pre('save', async function(next) {
     // checking just in case the function generate URL link that already existed
     let newURLcheck=true;
     while (newURLcheck) {
-        const newURL = cryptoRandomString({length:10, type: 'url-safe'});
+        const newURL = 66651564;
         const existedUser = await User.findOne({devlinkURL: newURL});
         if (!existedUser) {
             newURLcheck = false;

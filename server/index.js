@@ -9,20 +9,6 @@ const connectMongo = require('connect-mongo');
 const session = require('express-session');
 
 
-
-// start a Yoga graghql server
-const graphQLServer = createYoga({
-    schema: createSchema({
-        typeDefs,
-        resolvers
-    }),
-    graphiql: process.env.NODE_ENV === 'development'  
-    // in theory, graphiql should only be acivated when value NODE_ENV is in development
-    // however, it doesn't seems to disable when NODE_ENV is something else
-})
-
-app.use(graphQLServer.graphqlEndpoint, graphQLServer);
-
 db.once('open',()=>{
     console.log(`Connected to host ${db.host}`);
     app.listen(port, console.log(`Server running on port ${port}`));
@@ -38,6 +24,22 @@ db.once('open',()=>{
             maxAge: 1000 * 60 * 60 * 24 // Equals 1 day (1 day * 24 hr/1 day * 60 min/1 hr * 60 sec/1 min * 1000 ms / 1 sec)
         }
     }));
+
+        // start a Yoga graghql server
+    const graphQLServer = createYoga({
+        schema: createSchema({
+            typeDefs,
+            resolvers,
+        }),
+        // session data will be available in req fields
+        // in the future passport will provide data to req field
+        graphiql: process.env.NODE_ENV === 'development'  
+    })
+
+    app.use(graphQLServer.graphqlEndpoint, graphQLServer);
+
+
+
     app.get('/',(req,res,next)=>{
         console.log(req.session);
         res.send('Hello World');
