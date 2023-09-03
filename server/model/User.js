@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-// const cryptoRandomString = require('crypto-random-string');
+const { genCustomURL } = require('../utils/cryptoUtils');
 const { Schema } = mongoose;
 
 const userSchema = new mongoose.Schema({
@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
     // future extension can have each users pick their own URL extension, for example
     devlinkURL: {
         type: String,
-        required: true,
+        // required: true,
         unique: true
     }
 })
@@ -42,8 +42,9 @@ userSchema.pre('save', async function(next) {
     // checking just in case the function generate URL link that already existed
     let newURLcheck=true;
     while (newURLcheck) {
-        const newURL = 66651564;
+        const newURL = genCustomURL(12);
         const existedUser = await User.findOne({devlinkURL: newURL});
+        console.log(`New custom URL: ${newURL}`);
         if (!existedUser) {
             newURLcheck = false;
             this.devlinkURL = newURL;

@@ -6,9 +6,9 @@ const typeDef = `
     }
 
     type Link {
-        id: String!
-        platform: String!
-        websiteURL: String!
+        _id: ID
+        platform: String
+        textURL: String
     }
 `;
 
