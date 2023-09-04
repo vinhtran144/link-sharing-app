@@ -27,7 +27,9 @@ const resolvers ={
         // query that takes a User's id in the context fields
         // will implement passport to handle the context
         me: async (parent, args, context) => {
-            // console.log(context.req.session);
+            console.log('Testing query');
+            console.log(context.req.session);
+            console.log(context.req.user);
         }
     },
     Mutation: {
@@ -37,9 +39,7 @@ const resolvers ={
                 username,
                 ...saltHash
             };
-            console.log(newArgs);
             const user = await User.create(newArgs);
-            console.log(`return off addUser: ${user}`);
             return user;
         }
     }

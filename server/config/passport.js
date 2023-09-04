@@ -1,27 +1,35 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
+const {validPassword} = require('../utils/cryptoUtils');
 const { User } = require('../model');
 
-const verifyCallback = (username, password, done) => {
 
+// ------------------------- Passport strategy config -------------------------
+passport.use(new LocalStrategy((username, password, done) => {
+    console.log('Finding User');
     User.findOne({ username: username })
         .then((user) => {
+            console.log(user);
             //If no username is found
             if (!user) { return done(null, false) }
 
-            // Verify the password with data in the database, will implement later
-            return done(null, false) 
+            // validate the password with the hash and salt stored
+            const isValid = validPassword(password, user.hash, user.salt);
+            
+            if (isValid) {
+                return done(null, user);
+            } else {
+                return done(null, false);
+            }
         })
         .catch((err) => {   
             // return any error while exucuting
             done(err);
         });
 
-}
+}));
 
-passport.use(new LocalStrategy(verifyCallback));
-
-// functions for providing data to the sessions
+// ------------------------- Session management config -------------------------
 
 passport.serializeUser((user, done) => {
     done(null, user.id);

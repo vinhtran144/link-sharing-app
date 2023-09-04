@@ -1,12 +1,14 @@
 require('dotenv').config();
 const express = require('express');
-const { createSchema, createYoga } = require('graphql-yoga');
 const port = process.env.PORT || 5000;
-const {typeDefs, resolvers} = require('./schema') ; 
 const db = require('./config/database');
 const app = express();
+
+const graphQLrouter = require('./routes/grapghql');
+const restRouter = require('./routes/rest');
 const connectMongo = require('connect-mongo');
 const session = require('express-session');
+const passport = require('passport');
 
 
 db.once('open',()=>{
@@ -25,18 +27,14 @@ db.once('open',()=>{
         }
     }));
 
-        // start a Yoga graghql server
-    const graphQLServer = createYoga({
-        schema: createSchema({
-            typeDefs,
-            resolvers,
-        }),
-        // session data will be available in req fields
-        // in the future passport will provide data to req field
-        graphiql: process.env.NODE_ENV === 'development'  
-    })
+ 
 
-    app.use(graphQLServer.graphqlEndpoint, graphQLServer);
+    // make sure passport will authenticate every route with session method
+    app.use(passport.authenticate('session'));
+    // app.use(passport.session());
+
+    app.use(restRouter);
+    app.use(graphQLrouter);
 
 
 
