@@ -1,30 +1,35 @@
 const express = require('express');
 const restRouter = express.Router();
 const passport = require('passport');
+const {User}  = require('../model');
+const { genSaltHash } = require('../utils/cryptoUtils');
 
 // import passport configuration
 require('../config/passport');
 
 // currently, REST API will handle the authentication since it's much simpler and secure than handling with graphql
-// In the future it can be expanded to handle others REST operation
-restRouter.post('/login',(req,res,next)=>{
-    console.log(req.body);
-    passport.authenticate('local', function (err, user, info) {
-        // Currently only uses console.log, in the future can return JSON for status and messages
-        if (err) {
-            console.log(err);
-        }
-        if (user) {
-            console.log('login successfully');
-        } else {
-            console.log(info);
-        }
-    })(req,res,next);
+restRouter.post('/login',passport.authenticate('local', {failureRedirect: '/login', successRedirect:'/'}));
+
+restRouter.post('/register', async (req,res)=>{
+    const password = req.body.password;
+    const username = req.body.username;
+
+    const saltHash = genSaltHash(password);
+    const newArgs = {
+        username,
+        ...saltHash
+    };
+
+    const user = await User.create(newArgs);
+
+    res.redirect('/');
 });
 
-restRouter.get('/logout', (req, res, next) => {
-    req.logout();
-    // res.redirect('/');
+restRouter.post('/logout', (req, res, next) => {
+    req.logout((err) => {
+        if (err) return next(err);
+        res.redirect('/');
+    });
 });
 
 module.exports = restRouter;

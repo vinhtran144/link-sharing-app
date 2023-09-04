@@ -6,10 +6,8 @@ const { User } = require('../model');
 
 // ------------------------- Passport strategy config -------------------------
 passport.use(new LocalStrategy((username, password, done) => {
-    console.log('Finding User');
     User.findOne({ username: username })
         .then((user) => {
-            console.log(user);
             //If no username is found
             if (!user) { return done(null, false) }
 
@@ -36,7 +34,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((userId, done) => {
-    User.findById(userId)
+    User.findById(userId).select('-__v -hash -salt')
         .then((user) => {
             done(null, user);
         })

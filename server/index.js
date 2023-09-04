@@ -4,12 +4,13 @@ const port = process.env.PORT || 5000;
 const db = require('./config/database');
 const app = express();
 
-const graphQLrouter = require('./routes/grapghql');
-const restRouter = require('./routes/rest');
+const routes = require('./routes/');
 const connectMongo = require('connect-mongo');
 const session = require('express-session');
 const passport = require('passport');
 
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 db.once('open',()=>{
     console.log(`Connected to host ${db.host}`);
@@ -31,15 +32,13 @@ db.once('open',()=>{
 
     // make sure passport will authenticate every route with session method
     app.use(passport.authenticate('session'));
-    // app.use(passport.session());
-
-    app.use(restRouter);
-    app.use(graphQLrouter);
-
-
 
     app.get('/',(req,res,next)=>{
-        console.log(req.session);
+        console.log(req.user);
         res.send('Hello World');
     })
+
+    // add the request routes, including REST API and graphql endpoints
+    app.use(routes);
+
 });
