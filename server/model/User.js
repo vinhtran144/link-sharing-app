@@ -32,22 +32,29 @@ const userSchema = new mongoose.Schema({
     // future extension can have each users pick their own URL extension, for example
     devlinkURL: {
         type: String,
-        // required: true,
         unique: true
+    },
+
+    profilePic: {
+        type: Buffer
     }
 })
 
 // generate randomdevlinkURL whenever a user is added
 userSchema.pre('save', async function(next) {
-    // checking just in case the function generate URL link that already existed
-    let newURLcheck=true;
-    while (newURLcheck) {
-        const newURL = genCustomURL(12);
-        const existedUser = await User.findOne({devlinkURL: newURL});
-        console.log(`New custom URL: ${newURL}`);
-        if (!existedUser) {
-            newURLcheck = false;
-            this.devlinkURL = newURL;
+
+    // Generate URL token whenever a user is created
+    if (this.isNew) {
+        // checking just in case the function generate URL link that already existed
+        let newURLcheck=true;
+        while (newURLcheck) {
+            const newURL = genCustomURL(6);
+            const existedUser = await User.findOne({devlinkURL: newURL});
+            console.log(`New custom URL: ${newURL}`);
+            if (!existedUser) {
+                newURLcheck = false;
+                this.devlinkURL = newURL;
+            }
         }
     }
     next();

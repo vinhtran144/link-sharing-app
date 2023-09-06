@@ -34,7 +34,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((userId, done) => {
-    User.findById(userId).select('-__v -hash -salt')
+    User.findById(userId).select('-__v -hash -salt -links -profilePic')
         .then((user) => {
             done(null, user);
         })

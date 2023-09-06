@@ -1,3 +1,4 @@
+const { GraphQLError } = require('graphql');
 const {User, Link}  = require('../model');
 const { genSaltHash } = require('../utils/cryptoUtils');
 
@@ -7,39 +8,58 @@ const typeDef = `
     }
 
     type User {
-        _id: ID
         username: String
         links: [Link]
         devlinkURL: String
+        profilePic: String
     }
 
     type Mutation {
-        addUser(username:String!, password:String!): User
+        checkCustomURL(devlinkURL: String!): Boolean
+        updateURL(devlinkURL: String!): User
     }
 `;
 
 const resolvers ={
     Query:{
-        // user: (parent, args) => {
-        //     return users.find(user = user.id === args.id);
-        // }
-
-        // query that takes a User's id in the context fields
-        // will implement passport to handle the context
+        // Query to get User's data
         me: async (parent, args, context) => {
-            console.log(context.req.user);
+            if (context.req.user){
+                const userData = await User.findById({_id: context.req.user._id.valueOf()})
+                .populate('links');
+                return userData;
+            }
+            // If user haven't logged in
+            return null;
         }
     },
     Mutation: {
-        // addUser: async (parent, {username, password}, context) => {
-        //     const saltHash = genSaltHash(password);
-        //     const newArgs = {
-        //         username,
-        //         ...saltHash
-        //     };
-        //     const user = await User.create(newArgs);
-        //     return user;
-        // }
+        checkCustomURL: async (parent, { devlinkURL }, context) => {
+            // return whether the URL existed, used to let user know if their custom URL is available
+            const check = await User.findOne({devlinkURL});
+            if (check) return true;
+            return false;
+        },
+        updateURL: async (parent, { devlinkURL }, context) => {
+            const check = await User.findOne({devlinkURL});
+            if (check) {
+                throw new GraphQLError("URL already existed",{
+                    extensions: {code: "409"}
+                })
+            }
+            if (context.req.user) {
+                const updatedUser = await User.findOneAndUpdate({_id: context.req.user._id.valueOf()},{
+                    devlinkURL
+                },{
+                    new: true
+                });
+                return updatedUser;
+            }
+            else   
+                throw new GraphQLError("You're not authenticated",{
+                    extensions: {code: "401"}
+                })
+        }
     }
 }
 
