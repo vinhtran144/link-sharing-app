@@ -1,11 +1,12 @@
 const { GraphQLError } = require('graphql');
 const {User, Link}  = require('../model');
-const { genSaltHash } = require('../utils/cryptoUtils');
 
 const typeDef = `
     extend type Query {
         me: User
     }
+
+    scalar File
 
     type User {
         username: String
@@ -48,11 +49,11 @@ const resolvers ={
                 })
             }
             if (context.req.user) {
-                const updatedUser = await User.findOneAndUpdate({_id: context.req.user._id.valueOf()},{
-                    devlinkURL
-                },{
-                    new: true
-                });
+                const updatedUser = await User.findOneAndUpdate(
+                    {_id: context.req.user._id.valueOf()},
+                    { devlinkURL },
+                    { new: true }
+                );
                 return updatedUser;
             }
             else   
