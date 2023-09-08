@@ -7,13 +7,8 @@ const { genSaltHash } = require('../utils/cryptoUtils');
 // import passport configuration
 require('../config/passport');
 
-<<<<<<< HEAD
 // currently, REST API will handle the authentication since it's much simpler and secure than handling with graphql
 restRouter.post('/login',passport.authenticate('local', {failureRedirect: '/login?request=failed', successRedirect:'/'}));
-=======
-// REST API will handle the authentication since it's much simpler and secure than handling with graphql
-restRouter.post('/login',passport.authenticate('local', {failureRedirect: '/login', successRedirect:'/'}));
->>>>>>> 890d2871ceb441b9295e83572b4007ea78ba51bd
 
 restRouter.post('/register', async (req,res)=>{
     const password = req.body.password;

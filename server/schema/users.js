@@ -40,7 +40,7 @@ const resolvers ={
             })
         },
         getUser: async (parent, {devlinkURL}) => {
-            const user = await User.findOne({devlinkURL})
+            const user = await User.findOne({devlinkURL}).populate('links');
             if (user) {
                 return user
             } else
