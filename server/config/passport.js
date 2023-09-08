@@ -5,10 +5,17 @@ const { User } = require('../model');
 
 
 // ------------------------- Passport strategy config -------------------------
-passport.use(new LocalStrategy((username, password, done) => {
-    User.findOne({ username: username })
+const customFields = {
+    // custom fields for the POST request
+    usernameField: 'email',
+    passwordField: 'password'
+}
+passport.use(new LocalStrategy(customFields,(username, password, done) => {
+    // We're using email as username field, as passport local strategy needs
+    // username and password fields to authenticate
+    User.findOne({ email: username })
         .then((user) => {
-            //If no username is found
+            //If no email is found
             if (!user) { return done(null, false) }
 
             // validate the password with the hash and salt stored
