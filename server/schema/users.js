@@ -21,7 +21,7 @@ const typeDef = `
     type Mutation {
         checkEmail(email: String!): Boolean
         checkCustomURL(devlinkURL: String!): Boolean
-        updateUser(email: String, profilePic:String, devlinkURL: String, firstName: String, lastName: String ): User
+        updateUser(email: String, devlinkURL: String, firstName: String, lastName: String ): User
     }
 `;
 
@@ -62,7 +62,7 @@ const resolvers ={
             if (check) return true;
             return false;
         },
-        updateUser: async (parent, { email, devlinkURL, profilePic, firstName, lastName}, context) => {
+        updateUser: async (parent, { email, devlinkURL, firstName, lastName}, context) => {
             if (email) {
                 const check = await User.findOne({email});
                 if (check) {
@@ -79,16 +79,12 @@ const resolvers ={
                     })
                 }
             }
-            if (profilePic) {
-                // image processing to store as base64 goes here
-            }
             if (context.req.user) {
                 const updatedUser = await User.findOneAndUpdate(
                     {_id: context.req.user._id.valueOf()},
                     {   
                         email,
                         devlinkURL,
-                        profilePic,
                         firstName,
                         lastName
                     },
