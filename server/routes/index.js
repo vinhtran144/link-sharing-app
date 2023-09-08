@@ -13,7 +13,7 @@ routes.use((req,res,next) => {
     if (req.isAuthenticated() || process.env.NODE_ENV === 'development') {
         next();
     } else {
-        res.status(401).json({ msg: 'You are not authorized to view this resource' });
+        res.status(401).json({ msg: 'You are not authenticated' });
     }
 },graphQLrouter);
 

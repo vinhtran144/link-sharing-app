@@ -32,7 +32,7 @@ const resolvers ={
                 return updatedUser;
             }
             else   
-                throw new GraphQLError("You're not authenticated",{
+                throw new GraphQLError("You' are not authenticated",{
                     extensions: {code: "401"}
                 })
         },
@@ -48,7 +48,7 @@ const resolvers ={
                 return updatedUser;
             }
             else   
-                throw new GraphQLError("You're not authenticated",{
+                throw new GraphQLError("You are not authenticated",{
                     extensions: {code: "401"}
                 })
         },
@@ -63,7 +63,7 @@ const resolvers ={
                 return updatedUser;
             }
             else   
-                throw new GraphQLError("You're not authenticated",{
+                throw new GraphQLError("You are not authenticated",{
                     extensions: {code: "401"}
                 })
         }
