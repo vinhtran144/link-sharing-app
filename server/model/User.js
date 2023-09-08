@@ -57,7 +57,6 @@ userSchema.pre('save', async function(next) {
         while (newURLcheck) {
             const newURL = genCustomURL(6);
             const existedUser = await User.findOne({devlinkURL: newURL});
-            console.log(`New custom URL: ${newURL}`);
             if (!existedUser) {
                 newURLcheck = false;
                 this.devlinkURL = newURL;

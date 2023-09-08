@@ -4,7 +4,7 @@ const {User, Link}  = require('../model');
 const typeDef = `
     extend type Query {
         me: User
-        getLink(devlinkURL: String!): User
+        getUser(devlinkURL: String!): User
     }
 
     scalar File
@@ -38,6 +38,15 @@ const resolvers ={
             throw new GraphQLError("You're not authenticated",{
                 extensions: {code: "401"}
             })
+        },
+        getUser: async (parent, {devlinkURL}) => {
+            const user = await User.findOne({devlinkURL})
+            if (user) {
+                return user
+            } else
+                throw new GraphQLError("No user found",{
+                    extensions: {code: "404"}
+                })
         }
     },
     Mutation: {
@@ -69,6 +78,9 @@ const resolvers ={
                         extensions: {code: "409"}
                     })
                 }
+            }
+            if (profilePic) {
+                // image processing to store as base64 goes here
             }
             if (context.req.user) {
                 const updatedUser = await User.findOneAndUpdate(

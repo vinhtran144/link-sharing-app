@@ -12,17 +12,22 @@ restRouter.post('/login',passport.authenticate('local', {failureRedirect: '/logi
 
 restRouter.post('/register', async (req,res)=>{
     const password = req.body.password;
-    const username = req.body.username;
+    const email = req.body.email;
 
     const saltHash = genSaltHash(password);
     const newArgs = {
-        username,
+        email,
         ...saltHash
     };
 
-    const user = await User.create(newArgs);
+    try {
+        await User.create(newArgs);
+        res.redirect('/');
+    }
+    catch(error) {
+        res.status(409).send({msg: "Email already existed"});
+    }
 
-    res.redirect('/');
 });
 
 restRouter.post('/logout', (req, res, next) => {
