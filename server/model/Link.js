@@ -4,7 +4,6 @@ const {Schema} = mongoose;
 const linkSchema = new mongoose.Schema({
     platform: {
         type: String,
-        enum: ['github', 'youtube', 'twitter', 'other'],
         required: true
     },
     textURL: {

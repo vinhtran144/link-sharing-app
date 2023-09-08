@@ -3,7 +3,7 @@ const { genCustomURL } = require('../utils/cryptoUtils');
 const { Schema } = mongoose;
 
 const userSchema = new mongoose.Schema({
-    username: {
+    email: {
         type: String,
         required: true,
         unique: true,
@@ -27,6 +27,13 @@ const userSchema = new mongoose.Schema({
             ref: 'Link'
         }
     ],
+    firstName: {
+        type: String
+    },
+    lastName: {
+        type: String
+    }
+    ,
 
     // User's personallized URL extension for their page, will be generated when created
     // future extension can have each users pick their own URL extension, for example
@@ -50,7 +57,6 @@ userSchema.pre('save', async function(next) {
         while (newURLcheck) {
             const newURL = genCustomURL(6);
             const existedUser = await User.findOne({devlinkURL: newURL});
-            console.log(`New custom URL: ${newURL}`);
             if (!existedUser) {
                 newURLcheck = false;
                 this.devlinkURL = newURL;

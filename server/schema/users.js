@@ -4,20 +4,24 @@ const {User, Link}  = require('../model');
 const typeDef = `
     extend type Query {
         me: User
+        getUser(devlinkURL: String!): User
     }
 
     scalar File
 
     type User {
-        username: String
+        email: String
         links: [Link]
+        firstName: String
+        lastName: String
         devlinkURL: String
         profilePic: String
     }
 
     type Mutation {
+        checkEmail(email: String!): Boolean
         checkCustomURL(devlinkURL: String!): Boolean
-        updateURL(devlinkURL: String!): User
+        updateUser(email: String, profilePic:String, devlinkURL: String, firstName: String, lastName: String ): User
     }
 `;
 
@@ -31,27 +35,63 @@ const resolvers ={
                 return userData;
             }
             // If user haven't logged in
-            return null;
+            throw new GraphQLError("You're not authenticated",{
+                extensions: {code: "401"}
+            })
+        },
+        getUser: async (parent, {devlinkURL}) => {
+            const user = await User.findOne({devlinkURL})
+            if (user) {
+                return user
+            } else
+                throw new GraphQLError("No user found",{
+                    extensions: {code: "404"}
+                })
         }
     },
     Mutation: {
+        checkEmail: async (parent, { email }, context) => {
+            // return whether the email existed, useful for new user registration
+            const check = await User.findOne({email});
+            if (check) return true;
+            return false;
+        },
         checkCustomURL: async (parent, { devlinkURL }, context) => {
             // return whether the URL existed, used to let user know if their custom URL is available
             const check = await User.findOne({devlinkURL});
             if (check) return true;
             return false;
         },
-        updateURL: async (parent, { devlinkURL }, context) => {
-            const check = await User.findOne({devlinkURL});
-            if (check) {
-                throw new GraphQLError("URL already existed",{
-                    extensions: {code: "409"}
-                })
+        updateUser: async (parent, { email, devlinkURL, profilePic, firstName, lastName}, context) => {
+            if (email) {
+                const check = await User.findOne({email});
+                if (check) {
+                    throw new GraphQLError("Email already existed",{
+                        extensions: {code: "409"}
+                    })
+                }
+            }
+            if (devlinkURL) {
+                const check = await User.findOne({devlinkURL});
+                if (check) {
+                    throw new GraphQLError("URL already existed",{
+                        extensions: {code: "409"}
+                    })
+                }
+            }
+            if (profilePic) {
+                // image processing to store as base64 goes here
             }
             if (context.req.user) {
                 const updatedUser = await User.findOneAndUpdate(
                     {_id: context.req.user._id.valueOf()},
-                    { devlinkURL },
+                    {   
+                        email,
+                        devlinkURL,
+                        profilePic,
+                        firstName,
+                        lastName
+                    },
                     { new: true }
                 );
                 return updatedUser;
