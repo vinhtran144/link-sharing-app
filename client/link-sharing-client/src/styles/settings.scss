@@ -5,6 +5,13 @@
  */
 
 // https://vuetifyjs.com/features/sass-variables/`
-// @use 'vuetify/settings' with (
-//   $color-pack: false
-// );
+@use 'vuetify/settings' with (
+  $color-pack: false
+);
+@font-face {
+    font-family: 'InstrumentSans';
+    src: url('~@/../../assets/fonts/InstrumentSans-VariableFont_wdth\,wght.ttf');
+}
+
+
+$body-font-family: 'InstrumentSans', sans-serif;
