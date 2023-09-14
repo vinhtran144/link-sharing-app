@@ -7,7 +7,20 @@
                 <v-card-subtitle class="text-secondary-lighten-1">Add your details below to get back into the app</v-card-subtitle>
             </div>
             <div class="form">
-
+                
+                    <v-text-field
+                        variant="outlined"
+                        class="px-8"
+                        label="Email"
+                        prepend-inner-icon="custom:email"
+                    ></v-text-field>
+                    
+                    <v-text-field
+                        variant="outlined"
+                        class="px-8"
+                        label="Password"
+                        prepend-inner-icon="custom:password"
+                    ></v-text-field>
             </div>
         </div>
     </div>
@@ -20,7 +33,7 @@
         },
 
         mounted () {
-            console.log(this.$vuetify.display.width)
+            
             },
     }
 </script>
