@@ -23,10 +23,10 @@ Object.entries(svgdata).forEach(([key, value]) => {
     customSvgNameToComponent[newKey] = component
 })
 
-const custom: IconSet = {
+const customIcon: IconSet = {
     component: (props: IconProps) =>
       h(props.tag, [h(customSvgNameToComponent[props.icon as string], { class: 'v-icon__svg' })]),
     //   create icon sets
   }
 
-export  { custom /* aliases */ };
+export  { customIcon /* aliases */ };

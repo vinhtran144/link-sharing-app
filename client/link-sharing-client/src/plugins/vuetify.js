@@ -7,10 +7,11 @@
 // Styles
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
+import { mdi } from 'vuetify/iconsets/mdi'
 
 // Composables
 import { createVuetify } from 'vuetify'
-import {custom} from '../components/CustomIcons'
+import {customIcon} from '../components/CustomIcons'
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
@@ -32,9 +33,10 @@ export default createVuetify({
     },
   },
   icons: {
-    defaultSet: 'custom',
+    defaultSet: 'mdi',
     sets: {
-      custom
+      customIcon,
+      mdi
     },
   },
 })
