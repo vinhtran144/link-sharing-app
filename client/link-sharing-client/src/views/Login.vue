@@ -2,6 +2,7 @@
     import { ref, reactive } from 'vue';
     import { login } from '../requestUtils/restRequest';
     import { useRoute } from 'vue-router';
+    import solidBtn from '../components/buttons/solidBtn.vue'
 
     const viewStatusDialog = ref(false);
 
@@ -44,7 +45,7 @@
     <div class="page">
         <v-dialog
             v-model="viewStatusDialog"
-            width="auto"
+            width="300px"
             class="text-center"
             >
             <v-card>
@@ -52,7 +53,13 @@
                     The email or password you entered is incorrect
                 </v-card-text>
                 <v-card-actions>
-                    <v-btn color="primary" block @click="viewStatusDialog = false">Close</v-btn>
+                        <solidBtn 
+                                buttonText="dismiss"
+                                @buttonCLicked="viewStatusDialog = false"
+                                
+                            />
+
+                    <!-- <v-btn color="primary" block @click=>Close</v-btn> -->
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -92,18 +99,12 @@
                         prepend-inner-icon="customIcon:password"
                     ></v-text-field>
                     <div class="px-8 pb-6">
-                        <v-hover v-slot:default="{ isHovering, props }">
-                            <v-btn
-                            @click="loginUser"
-                            v-bind="props"
-                            block class="py-6 bg-primary"
-                            :class="isHovering ? 'py-6 bg-primary-lighten-1 text-surface': 'py-6 bg-primary'"
-                            >
-                                Login
-                            </v-btn>
-
-                        </v-hover>
-
+                       
+                        <solidBtn 
+                            buttonText="Login"
+                            @buttonCLicked="loginUser"
+                        />
+                       
                     </div>
                     <div class="newAccLink">
                         <v-card-subtitle class="text-secondary-lighten-1 px-0 py-1 pr-1">Don't have an account?</v-card-subtitle>
