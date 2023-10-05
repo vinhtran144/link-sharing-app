@@ -1,15 +1,61 @@
 <script setup>
     import { ref, reactive } from 'vue';
+    import { login } from '../requestUtils/restRequest';
+    import { useRoute } from 'vue-router';
+
+    const viewStatusDialog = ref(false);
+
+    // if the user login with incorrect credentials, they will be redirected to /login?request=failed
+    // taking the URL's parameter to display an error box
+    const urlParams = new URLSearchParams(window.location.search);
+    const requestStatus = urlParams.get('request')
+    if (requestStatus=='failed')
+        viewStatusDialog.value = true;
+
     const rules = reactive({
         required: value => !!value || 'Required',
         min: v => v.length >= 8 || 'Min 8 characters',
     });
-    const visible= ref(false);
+    const visible= ref(false); // boolean to keep track of the user's password visibility
 
+    // Login forms variables
+    const userEmail = ref('');
+    const userPassword = ref('');
+
+    // login user once the button is clicked
+    async function loginUser() {
+        // checking for errors, exiting the function if it doesn't satisfy the error
+        // the components will handle error reporting, so this function doesn't have to do much
+        if ( !userEmail.value ) return;
+        if ( !userPassword.value ) return;
+        if ( userPassword.value < 8 ) return;
+        try {
+            console.log(await login(userEmail.value, userPassword.value));
+        } catch (e) {
+            console.log(e);
+            // Currently, the function only return axio errors as after login as the server redirects
+            // the users after login, making axio do a 2nd get request to the server
+            // Since the server haven't been set up to serve Vue clients builds, it returns 404
+        }
+    }
 </script>
 
 <template>
     <div class="page">
+        <v-dialog
+            v-model="viewStatusDialog"
+            width="auto"
+            class="text-center"
+            >
+            <v-card>
+                <v-card-text>
+                    The email or password you entered is incorrect
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn color="primary" block @click="viewStatusDialog = false">Close</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
         <img class="logo" src="../assets/images/logo-devlinks-large.svg" alt="Devlink logo" >
         <div class="card" >
             <div class="title  py-10 px-8">
@@ -18,6 +64,7 @@
             </div>
             <div class="form pb-8 ">
                     <v-text-field
+                        v-model="userEmail"
                         variant="outlined"
                         :rules="[rules.required]"
                         hint="e.g. alex@email.com"
@@ -30,6 +77,7 @@
                     ></v-text-field>
                     
                     <v-text-field
+                        v-model="userPassword"
                         variant="outlined"
                         :rules="[rules.required, rules.min]"
                         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
@@ -46,6 +94,7 @@
                     <div class="px-8 pb-6">
                         <v-hover v-slot:default="{ isHovering, props }">
                             <v-btn
+                            @click="loginUser"
                             v-bind="props"
                             block class="py-6 bg-primary"
                             :class="isHovering ? 'py-6 bg-primary-lighten-1 text-surface': 'py-6 bg-primary'"
