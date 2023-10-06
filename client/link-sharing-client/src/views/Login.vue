@@ -1,8 +1,9 @@
 <script setup>
     import { ref, reactive } from 'vue';
-    import { login } from '../requestUtils/restRequest';
+    import { login } from '@/requestUtils/restRequest';
     import { useRoute } from 'vue-router';
-    import solidBtn from '../components/buttons/solidBtn.vue'
+    import solidBtn from '@/components/buttons/solidBtn.vue'
+    import errorMsg from '@/components/popupMsg/errorMsg.vue'
 
     const viewStatusDialog = ref(false);
 
@@ -12,6 +13,10 @@
     const requestStatus = urlParams.get('request')
     if (requestStatus=='failed')
         viewStatusDialog.value = true;
+    // function to close dialog when button is clicked
+    const handleClose = () => {
+        viewStatusDialog.value = false
+    }
 
     const rules = reactive({
         required: value => !!value || 'Required',
@@ -42,29 +47,16 @@
 </script>
 
 <template>
-    <div class="page">
-        <v-dialog
-            v-model="viewStatusDialog"
-            width="300px"
-            class="text-center"
-            >
-            <v-card>
-                <v-card-text>
-                    The email or password you entered is incorrect
-                </v-card-text>
-                <v-card-actions>
-                        <solidBtn 
-                                buttonText="dismiss"
-                                @buttonCLicked="viewStatusDialog = false"
-                                
-                            />
+    <div class="authPage">
+        <errorMsg
+            :isShown="viewStatusDialog"
+            title="Login failed"
+            text="The email or password you entered is incorrect"
+            @MessageClosed="handleClose"
+        />
 
-                    <!-- <v-btn color="primary" block @click=>Close</v-btn> -->
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
         <img class="logo" src="../assets/images/logo-devlinks-large.svg" alt="Devlink logo" >
-        <div class="card" >
+        <div class="authCard" >
             <div class="title  py-10 px-8">
                 <v-card-title class="text-h4 text-secondary pa-0">Login</v-card-title>
                 <v-card-subtitle class="text-secondary-lighten-1 px-0 pt-2">Add your details below to get back into the app</v-card-subtitle>
@@ -117,7 +109,7 @@
 </template>
 
 <style scoped>
-.page{
+.authPage{
     background: rgb(var(--v-theme-surface));
     min-height: 100dvh;
     display: flex;
@@ -126,7 +118,7 @@
     align-items: center;
 }
 
-.card {
+.authCard {
     background: rgb(var(--v-theme-surface));
     width: 100%;
     max-width: 480px;
@@ -145,7 +137,7 @@
     /* h1{
         font-size: 32px;
     } */
-    .page{
+    .authPage{
         background: rgb(var(--v-theme-background));
     }
     .logo {
