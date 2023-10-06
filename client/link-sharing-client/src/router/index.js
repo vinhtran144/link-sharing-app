@@ -1,6 +1,7 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
-import Login from '../views/Login'
+import Login from '@/views/Login'
+import Signup from  '@/views/Signup'
 
 const routes = [
   {
@@ -22,6 +23,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login,
+  },
+  {
+    path: '/signup',
+    name: 'Signup',
+    component: Signup,
   },
 ]
 

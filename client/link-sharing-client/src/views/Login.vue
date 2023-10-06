@@ -1,7 +1,6 @@
 <script setup>
     import { ref, reactive } from 'vue';
     import { login } from '@/requestUtils/restRequest';
-    import { useRoute } from 'vue-router';
     import solidBtn from '@/components/buttons/solidBtn.vue'
     import errorMsg from '@/components/popupMsg/errorMsg.vue'
 
@@ -62,6 +61,8 @@
                 <v-card-subtitle class="text-secondary-lighten-1 px-0 pt-2">Add your details below to get back into the app</v-card-subtitle>
             </div>
             <div class="form pb-8 ">
+                <v-form @submit.prevent>
+
                     <v-text-field
                         v-model="userEmail"
                         variant="outlined"
@@ -69,7 +70,7 @@
                         hint="e.g. alex@email.com"
                         persistent-hint
                         class="px-8 pb-6"
-                        label="Email"
+                        label="Email address"
                         color="primary"
                         density="comfortable"
                         prepend-inner-icon="customIcon:email"
@@ -98,6 +99,7 @@
                         />
                        
                     </div>
+                </v-form>
                     <div class="newAccLink">
                         <v-card-subtitle class="text-secondary-lighten-1 px-0 py-1 pr-1">Don't have an account?</v-card-subtitle>
                         <v-card-subtitle class=" px-0 py-1 "><a href="/signup" class="text-primary text-decoration-none" target="_self">Create an account</a></v-card-subtitle>
