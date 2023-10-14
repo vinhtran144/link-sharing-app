@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export const CHECK_EMAIL = gql`
+export const CHECK_EMAIL_VALID = gql`
 mutation checkEmail($email: String!) {
     checkEmail(email:$email)
   }

@@ -3,7 +3,7 @@
     import solidBtn from '@/components/buttons/solidBtn.vue'
     import errorMsg from '@/components/popupMsg/errorMsg.vue'
     import { useMutation } from '@vue/apollo-composable';
-    import { CHECK_EMAIL } from '@/requestUtils/mutation'
+    import { CHECK_EMAIL_VALID } from '@/requestUtils/mutation'
 
     // Ref and methods for dealing with sign up error dialog
     const viewError = ref(false);
@@ -13,17 +13,11 @@
         errText.value = ''; //clearing for next error message
     }
 
-    const rules = reactive({
-        required: value => !!value || 'Required',
-        min: v => v.length >= 8 || 'Min 8 characters',
-    });
+    // Ref to handle checking whether the email is valid to use
+    const emailCheck = ref(true);
+    const emailField = ref();
 
-    // Login forms variables
-    const userEmail = ref('');
-    const newPassword = ref('');
-    const dupPassword = ref('');
-
-    const { mutate: checkEmail, onDone } = useMutation(CHECK_EMAIL,
+    const { mutate: checkEmail, onDone } = useMutation(CHECK_EMAIL_VALID,
     () => ({
         variables: {
             email: userEmail.value
@@ -32,26 +26,23 @@
     }));
 
     onDone((res)=>{
-        console.log(res);
+        // runs after mutation is done
+        emailCheck.value = res.data.checkEmail;
+        emailField.value.validate();
+        // manually force the email field to run validate to check if the email is valid
     })
 
-    // checkEmail()
+    const rules = reactive({
+        required: value => !!value || 'Required',
+        min: v => v.length >= 8 || 'Min 8 characters',
+        valid: () => emailCheck.value || 'Email is already taken'
+    });
 
-    // async function checkEmail() {
-    //     if ( !userEmail.value ) return;
-    //     try{
-    //         console.log(userEmail.value);
-    //         const respone = await mutate({
-    //             variables: {
-    //                 email: userEmail.value
-    //             }
-    //         })
-    //         console.log(respone);
-
-    //     } catch(err){
-    //         console.log(err)
-    //     }
-    // }
+    // Login forms variables
+    const userEmail = ref('');
+    const newPassword = ref('');
+    const dupPassword = ref('');
+    const loading = ref(false);
 
     async function signupUser() {
         // checking for errors, exiting the function if it doesn't satisfy the error
@@ -61,16 +52,17 @@
         if ( newPassword.value < 8 ) return;
         if ( !dupPassword.value ) return;
         if ( dupPassword.value < 8 ) return;
+        if ( !emailCheck ) return;
 
-        if (newPassword.value != dupPassword.value) {
-            errText.value = "The password you entered didn't match";
+        if (emailCheck.value == false) {
+            errText.value = "The email is already been used";
             viewError.value = true;
             // Clearing the password fields
             newPassword.value = '';
             dupPassword.value = '';
+            return;
         }
-
-        // Validate that email is available here
+        // Send signup data to create new user here
     }
 
 </script>
@@ -95,7 +87,7 @@
                     <v-text-field
                             v-model="userEmail"
                             variant="outlined"
-                            :rules="[rules.required]"
+                            :rules="[rules.required, rules.valid]"
                             hint="e.g. alex@email.com"
                             persistent-hint
                             class="px-8 pb-6"
@@ -103,6 +95,8 @@
                             color="primary"
                             density="comfortable"
                             prepend-inner-icon="customIcon:email"
+                            @change="checkEmail"
+                            ref="emailField"
                         ></v-text-field>
     
                         <v-text-field
@@ -138,11 +132,7 @@
                                buttonText="Signup"
                                @buttonCLicked="signupUser"
                            />
-                           <solidBtn 
-                               buttonText="Check email"
-                               @buttonCLicked="checkEmail"
-                           />
-                          
+                           
                        </div>
                 </v-form>
                    <div class="loginLink">

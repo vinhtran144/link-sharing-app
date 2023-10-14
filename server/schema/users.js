@@ -51,16 +51,16 @@ const resolvers ={
     },
     Mutation: {
         checkEmail: async (parent, { email }, context) => {
-            // return whether the email existed, useful for new user registration
+            // return whether the email is valid, useful for new user registration
             const check = await User.findOne({email});
-            if (check) return true;
-            return false;
+            if (check) return false;
+            return true;
         },
         checkCustomURL: async (parent, { devlinkURL }, context) => {
-            // return whether the URL existed, used to let user know if their custom URL is available
+            // return whether the URL is valid, used to let user know if their custom URL is available
             const check = await User.findOne({devlinkURL});
-            if (check) return true;
-            return false;
+            if (check) return false;
+            return true;
         },
         updateUser: async (parent, { email, devlinkURL, firstName, lastName}, context) => {
             if (email) {
