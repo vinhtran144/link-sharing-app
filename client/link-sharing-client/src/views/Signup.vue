@@ -2,6 +2,8 @@
     import { ref, reactive } from 'vue';
     import solidBtn from '@/components/buttons/solidBtn.vue'
     import errorMsg from '@/components/popupMsg/errorMsg.vue'
+    import { useMutation } from '@vue/apollo-composable';
+    import { CHECK_EMAIL } from '@/requestUtils/mutation'
 
     // Ref and methods for dealing with sign up error dialog
     const viewError = ref(false);
@@ -20,6 +22,36 @@
     const userEmail = ref('');
     const newPassword = ref('');
     const dupPassword = ref('');
+
+    const { mutate: checkEmail, onDone } = useMutation(CHECK_EMAIL,
+    () => ({
+        variables: {
+            email: userEmail.value
+        },
+            
+    }));
+
+    onDone((res)=>{
+        console.log(res);
+    })
+
+    // checkEmail()
+
+    // async function checkEmail() {
+    //     if ( !userEmail.value ) return;
+    //     try{
+    //         console.log(userEmail.value);
+    //         const respone = await mutate({
+    //             variables: {
+    //                 email: userEmail.value
+    //             }
+    //         })
+    //         console.log(respone);
+
+    //     } catch(err){
+    //         console.log(err)
+    //     }
+    // }
 
     async function signupUser() {
         // checking for errors, exiting the function if it doesn't satisfy the error
@@ -105,6 +137,10 @@
                            <solidBtn 
                                buttonText="Signup"
                                @buttonCLicked="signupUser"
+                           />
+                           <solidBtn 
+                               buttonText="Check email"
+                               @buttonCLicked="checkEmail"
                            />
                           
                        </div>
