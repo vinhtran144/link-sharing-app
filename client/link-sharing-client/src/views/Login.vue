@@ -31,11 +31,10 @@
     async function loginUser() {
         // checking for errors, exiting the function if it doesn't satisfy the error
         // the components will handle error reporting, so this function doesn't have to do much
-        if ( !userEmail.value ) return;
-        if ( !userPassword.value ) return;
+        if ( !userEmail.value || !userPassword.value ) return;
         if ( userPassword.value < 8 ) return;
         try {
-            console.log(await login(userEmail.value, userPassword.value));
+            await login(userEmail.value, userPassword.value);
         } catch (e) {
             console.log(e);
             // Currently, the function only return axio errors as after login as the server redirects

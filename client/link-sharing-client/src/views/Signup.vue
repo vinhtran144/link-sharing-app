@@ -1,5 +1,6 @@
 <script setup>
     import { ref, reactive } from 'vue';
+    import { register } from '@/requestUtils/restRequest';
     import solidBtn from '@/components/buttons/solidBtn.vue'
     import errorMsg from '@/components/popupMsg/errorMsg.vue'
     import { useMutation } from '@vue/apollo-composable';
@@ -47,12 +48,9 @@
     async function signupUser() {
         // checking for errors, exiting the function if it doesn't satisfy the error
         // the components will handle error reporting, so this function doesn't have to do much
-        if ( !userEmail.value ) return;
-        if ( !newPassword.value ) return;
-        if ( newPassword.value < 8 ) return;
-        if ( !dupPassword.value ) return;
-        if ( dupPassword.value < 8 ) return;
-        if ( !emailCheck ) return;
+        if ( !userEmail.value || !newPassword.value || !dupPassword.value) return;
+        if ( newPassword.value < 8 || dupPassword.value < 8 ) return;
+        if ( !emailCheck ) return; // boolean for whether the email is valid
 
         if (emailCheck.value == false) {
             errText.value = "The email is already been used";
@@ -62,7 +60,26 @@
             dupPassword.value = '';
             return;
         }
-        // Send signup data to create new user here
+
+        if (newPassword.value !== dupPassword.value) {
+            errText.value = "Your password did not match";
+            viewError.value = true;
+            // Clearing the password fields
+            newPassword.value = '';
+            dupPassword.value = '';
+            return;
+        }
+        // Once every conditions has been checked
+        try {
+            await register(userEmail.value, newPassword.value);
+        } catch (e) {
+            console.log(e)
+            // Currently, the function only return axio errors as after login as the server redirects
+            // the users after login, making axio do a 2nd get request to the server
+            // Since the server haven't been set up to serve Vue clients builds, it returns 404
+        }
+
+
     }
 
 </script>
