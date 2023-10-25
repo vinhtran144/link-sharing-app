@@ -37,8 +37,8 @@
             await login(userEmail.value, userPassword.value);
         } catch (e) {
             console.log(e);
-            // Currently, the function only return axio errors as after login as the server redirects
-            // the users after login, making axio do a 2nd get request to the server
+            // Currently, the function only return axio errors as after login, the server redirects
+            // the users to home page, making axio do a 2nd get request to the server
             // Since the server haven't been set up to serve Vue clients builds, it returns 404
         }
     }
