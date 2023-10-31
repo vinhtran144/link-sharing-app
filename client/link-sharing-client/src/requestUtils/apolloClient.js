@@ -1,4 +1,3 @@
-import { DefaultApolloClient } from '@vue/apollo-composable'
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core'
 
 const httpLink = createHttpLink({

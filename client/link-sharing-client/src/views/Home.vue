@@ -12,7 +12,19 @@
 </template>
 
 <script setup>
-  
+  import { ref, reactive } from 'vue';
+  const preview = ref(false);
+  // check for u query parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = urlParams.get('u');
+  if (userId) {
+    preview.value = true;
+    // send graphql query to getuser with userId
+  } else {
+    // send graphql query me
+    // iff fail, redirect to login
+  }
+
 </script>
 
 <style scoped>

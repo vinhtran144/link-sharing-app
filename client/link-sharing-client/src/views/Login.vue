@@ -1,20 +1,26 @@
 <script setup>
     import { ref, reactive } from 'vue';
+    import { useRoute } from 'vue-router';
+
     import { login } from '@/requestUtils/restRequest';
     import solidBtn from '@/components/buttons/solidBtn.vue'
     import errorMsg from '@/components/popupMsg/errorMsg.vue'
 
     const viewStatusDialog = ref(false);
 
-    // if the user login with incorrect credentials, they will be redirected to /login?request=failed
-    // taking the URL's parameter to display an error box
-    const urlParams = new URLSearchParams(window.location.search);
-    const requestStatus = urlParams.get('request')
-    if (requestStatus=='failed')
+    // Get the status parameter values inside the URL
+    // 0: default
+    // 1: invalid credentials
+    // 2: invalid devLink URL           (if the user go to a link that doesn't exist,
+    //                                   they'll be directed here for error handling)
+    const status = useRoute().params.status;
+
+
+    if (status==1)
         viewStatusDialog.value = true;
     // function to close dialog when button is clicked
     const handleClose = () => {
-        viewStatusDialog.value = false
+        viewStatusDialog.value = false;
     }
 
     const rules = reactive({
@@ -33,14 +39,14 @@
         // the components will handle error reporting, so this function doesn't have to do much
         if ( !userEmail.value || !userPassword.value ) return;
         if ( userPassword.value < 8 ) return;
-        try {
-            await login(userEmail.value, userPassword.value);
-        } catch (e) {
-            console.log(e);
-            // Currently, the function only return axio errors as after login, the server redirects
-            // the users to home page, making axio do a 2nd get request to the server
-            // Since the server haven't been set up to serve Vue clients builds, it returns 404
-        }
+        const { isSuccessful, serverResponse } = await login(userEmail.value, userPassword.value);
+        if (isSuccessful)
+            console.log('Success');
+        else
+            console.log('Failed');
+        console.log(serverResponse);
+        // testmail@testmail.com
+        // password123
     }
 </script>
 
