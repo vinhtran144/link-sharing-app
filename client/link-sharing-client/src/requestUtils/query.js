@@ -29,3 +29,10 @@ export const QUERY_ME = gql`
     }
 }
 `
+export const LOGIN_CHECK = gql`
+{
+    loginCheck {
+        isLoggedIn
+    }
+}
+`

@@ -14,7 +14,7 @@ import { createApp } from 'vue'
 import { registerPlugins } from '@/plugins'
 
 import { DefaultApolloClient } from '@vue/apollo-composable'
-import apolloClient from './requestUtils/apolloClient'
+import apolloClient from '@/requestUtils/apolloClient'
 
 
 const app = createApp(App)

@@ -30,7 +30,7 @@ const routes = [
     redirect:'/'
   },
   {
-    path: '/login/:status',
+    path: '/login/:mode',
     name: 'Login',
     component: Login,
   },

@@ -5,9 +5,14 @@ const typeDef = `
     extend type Query {
         me: User
         getUser(devlinkURL: String!): User
+        loginCheck: loginResponse
     }
 
     scalar File
+
+    type loginResponse {
+        isLoggedIn: Boolean
+    }
 
     type User {
         email: String
@@ -47,6 +52,16 @@ const resolvers ={
                 throw new GraphQLError("No user found",{
                     extensions: {code: "404"}
                 })
+        },
+        loginCheck: (parent, args, context) => {
+            const response = {isLoggedIn: false};
+            if (context.req.user){
+                // Simple check to see if the user is logged in
+                response.isLoggedIn = true
+            } 
+            console.lo
+            console.log(response);
+            return response;
         }
     },
     Mutation: {

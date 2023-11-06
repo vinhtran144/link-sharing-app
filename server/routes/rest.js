@@ -9,7 +9,7 @@ require('../config/passport');
 
 // currently, REST API will handle the authentication since it's much simpler and secure than handling with graphql
 restRouter.post('/login',passport.authenticate('local'),(req,res)=>{
-    res.status(400).send({msg: "Successfully login"});
+    res.status(200).send({msg: "Successfully login"});
 });
 
 

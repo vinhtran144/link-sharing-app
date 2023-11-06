@@ -1,23 +1,24 @@
 <script setup>
-    import { ref, reactive } from 'vue';
+    import { ref, reactive ,watch } from 'vue';
     import { useRoute } from 'vue-router';
+    // import { useQuery, useResult, useLazyQuery } from '@vue/apollo-composable'
 
+    
+    import { LOGIN_CHECK } from '@/requestUtils/query';
     import { login } from '@/requestUtils/restRequest';
     import solidBtn from '@/components/buttons/solidBtn.vue'
     import errorMsg from '@/components/popupMsg/errorMsg.vue'
-
+    
     const viewStatusDialog = ref(false);
 
-    // Get the status parameter values inside the URL
-    // 0: default
-    // 1: invalid credentials
-    // 2: invalid devLink URL           (if the user go to a link that doesn't exist,
-    //                                   they'll be directed here for error handling)
-    const status = useRoute().params.status;
+    // Get the mode parameter values inside the URL, there's 2 modes
+    // 0: default, handle login as normal
+    // 1: error handling, specifically when users tries to access an invalid route
+    //    basically this is where 404 errors are displayed  
+    const mode = useRoute().params.mode;
 
-
-    if (status==1)
-        viewStatusDialog.value = true;
+    // if (mode==1)
+    //     viewStatusDialog.value = true;
     // function to close dialog when button is clicked
     const handleClose = () => {
         viewStatusDialog.value = false;
@@ -39,12 +40,7 @@
         // the components will handle error reporting, so this function doesn't have to do much
         if ( !userEmail.value || !userPassword.value ) return;
         if ( userPassword.value < 8 ) return;
-        const { isSuccessful, serverResponse } = await login(userEmail.value, userPassword.value);
-        if (isSuccessful)
-            console.log('Success');
-        else
-            console.log('Failed');
-        console.log(serverResponse);
+       
         // testmail@testmail.com
         // password123
     }
